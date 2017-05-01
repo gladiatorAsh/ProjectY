@@ -97,6 +97,7 @@ public class WorkHandler extends SimpleChannelInboundHandler<WorkMessage> {
 	 * @throws IOException
 	 */
 	public void handleMessage(WorkMessage msg, Channel channel) throws IOException {
+		try {
 		if (msg == null) {
 			// TODO add logging
 			System.out.println("ERROR: Unexpected content  - " + msg);
@@ -112,7 +113,7 @@ public class WorkHandler extends SimpleChannelInboundHandler<WorkMessage> {
 			PrintUtil.printWork(msg);
 
 		// TODO How can you implement this without if-else statements?
-		try {
+		
 			if (msg.getHeader().hasElection()) {
 				System.out.println("Processing the message:");
 				state.handleMessage(channel, msg);
@@ -257,6 +258,7 @@ public class WorkHandler extends SimpleChannelInboundHandler<WorkMessage> {
 			}
 		} catch (Exception e) {
 			// TODO add logging
+			e.printStackTrace();
 			Failure.Builder eb = Failure.newBuilder();
 			eb.setId(state.getConf().getNodeId());
 			eb.setRefId(msg.getHeader().getNodeId());

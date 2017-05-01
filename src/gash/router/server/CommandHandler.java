@@ -97,55 +97,59 @@ public class CommandHandler extends SimpleChannelInboundHandler<CommandMessage> 
 	 * @throws Exception
 	 */
 	public void handleMessage(CommandMessage msg, Channel channel) throws Exception {
+		try{
+			System.out.println("Message recieved");
 
-		System.out.println("Message recieved");
-
-		if (msg == null) {
-			System.out.println("ERROR: Unexpected content - " + msg);
-			return;
-		}
-		if(msg.hasPing()){
-			System.out.println("Received ping from cluster 1");
-			 ServerState.getNext().writeAndFlush(msg);
-		}
-		if (msg.getRequest().getRequestType() == TaskType.REQUESTREADFILE) {
-			QueueHandler.enqueueInboundCommandAndChannel(msg,channel);
-		}else if (msg.getPing()) {
-			 System.out.println("Received ping from cluster 1");
-			 ServerState.getNext().writeAndFlush(msg);
-			/*if (!ServerState.isRoundTrip() && msg.getHeader().getDestination() == Constants.clusterId) {
-				ServerState.setRoundTrip(true);
-				CommandMessage ping = createCommandPing(msg.getHeader().getDestination());
-				ServerState.getNext().writeAndFlush(ping);
-			} else if (ServerState.isRoundTrip() && msg.getHeader().getDestination() == Constants.clusterId) {
-				ServerState.setRoundTrip(false);
-				System.out.println("***Got the ping back by going through the ring across all clusters***");
-				channel.writeAndFlush(msg);
-			} else {
-				CommandMessage ping = createCommandPing(msg.getHeader().getDestination());
-				ServerState.getNext().writeAndFlush(ping);
-			}*/
-
-		}
-
-		if (msg.getRequest().getRequestType() == TaskType.REQUESTREADFILE) {
-			if (msg.getRequest().getRrb().getFilename().equals("*")) {
-				readFileNamesCmd(msg, channel);
-			} else {
-				
-				readFileCmd(msg, channel);
- 		        }
+			if (msg == null) {
+				System.out.println("ERROR: Unexpected content - " + msg);
+				return;
 			}
-		
+			if(msg.hasPing()){
+				System.out.println("Received ping from cluster 1");
+				 ServerState.getNext().writeAndFlush(msg);
+			}
+			if (msg.getRequest().getRequestType() == TaskType.REQUESTREADFILE) {
+				QueueHandler.enqueueInboundCommandAndChannel(msg,channel);
+			}else if (msg.getPing()) {
+				 System.out.println("Received ping from cluster 1");
+				 ServerState.getNext().writeAndFlush(msg);
+				/*if (!ServerState.isRoundTrip() && msg.getHeader().getDestination() == Constants.clusterId) {
+					ServerState.setRoundTrip(true);
+					CommandMessage ping = createCommandPing(msg.getHeader().getDestination());
+					ServerState.getNext().writeAndFlush(ping);
+				} else if (ServerState.isRoundTrip() && msg.getHeader().getDestination() == Constants.clusterId) {
+					ServerState.setRoundTrip(false);
+					System.out.println("***Got the ping back by going through the ring across all clusters***");
+					channel.writeAndFlush(msg);
+				} else {
+					CommandMessage ping = createCommandPing(msg.getHeader().getDestination());
+					ServerState.getNext().writeAndFlush(ping);
+				}*/
 
-		if (msg.getRequest().getRequestType() == TaskType.REQUESTWRITEFILE) {
+			}
 
-			writeFileCmd(msg, channel);
+			if (msg.getRequest().getRequestType() == TaskType.REQUESTREADFILE) {
+				if (msg.getRequest().getRrb().getFilename().equals("*")) {
+					readFileNamesCmd(msg, channel);
+				} else {
+					
+					readFileCmd(msg, channel);
+	 		        }
+				}
+			
+
+			if (msg.getRequest().getRequestType() == TaskType.REQUESTWRITEFILE) {
+
+				writeFileCmd(msg, channel);
+			}
+
+			//pingCmd(msg, channel);
+
+			System.out.flush();
+		}catch(Exception e){
+			e.printStackTrace(s);
 		}
-
-		pingCmd(msg, channel);
-
-		System.out.flush();
+		
 
 	}
 

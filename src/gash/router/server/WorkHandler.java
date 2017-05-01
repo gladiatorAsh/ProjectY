@@ -153,9 +153,9 @@ public class WorkHandler extends SimpleChannelInboundHandler<WorkMessage> {
 				Failure err = msg.getErr();
 				logger.error("failure from " + msg.getHeader().getNodeId());
 				// PrintUtil.printFailure(err);
-			} else if (msg.getReq().getRequestType() == TaskType.REQUESTREADFILE) {
+			} else if (!msg.getHeader().getSteal() && msg.getReq().getRequestType() == TaskType.REQUESTREADFILE) {
 				QueueHandler.enqueueInboundWorkAndChannel(msg, channel);
-			} else if (msg.getReq().getRequestType() == TaskType.REQUESTWRITEFILE) {
+			} else if (!msg.getHeader().getSteal() && msg.getReq().getRequestType() == TaskType.REQUESTWRITEFILE) {
 
 				String file_id = msg.getReq().getRwb().getFileId();
 				String file_name = msg.getReq().getRwb().getFilename();
